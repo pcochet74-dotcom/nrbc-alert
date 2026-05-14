@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Accueil – Système d’Alerte NRBC‑E</title>
+    <style>
+        body { font-family: Arial, sans-serif; background:#f4f4f4; padding:20px; }
+        .container { max-width:900px; margin:auto; background:white; padding:25px; border-radius:10px; }
+        h1 { text-align:center; color:#b71c1c; }
+        h2 { margin-top:30px; border-bottom:1px solid #ddd; padding-bottom:5px; }
+        .alert { background:#ffe5e5; border-left:5px solid #b71c1c; padding:10px; margin:10px 0; }
+        .report { background:#e3f2fd; border-left:5px solid #1565c0; padding:15px; margin-top:15px; }
+        a.button { display:inline-block; margin-top:20px; padding:12px 20px; background:#b71c1c; color:white; text-decoration:none; border-radius:5px; }
+        a.button:hover { background:#8e0000; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Système d’Alerte NRBC‑E</h1>
+
+    <a href="alert.html" class="button">➤ Déclencher une alerte NRBC‑E</a>
+
+    <!-- ALERTES RECENTES -->
+    <h2>Alertes récentes</h2>
+    <div id="alertes"></div>
+
+    <!-- RAPPORT JOURNALIER -->
+    <h2>Rapport du jour : Hantavirus</h2>
+    <div class="report" id="rapport">
+        Chargement du rapport…
+    </div>
+</div>
+
+<script>
+// Charger les alertes récentes
+async function chargerAlertes() {
+    const res = await fetch("/api/alertes-recentes");
+    const data = await res.json();
+
+    const zone = document.getElementById("alertes");
+    zone.innerHTML = "";
+
+    if (data.length === 0) {
+        zone.innerHTML = "<p>Aucune alerte récente.</p>";
+        return;
+    }
+
+    data.forEach(a => {
+        zone.innerHTML += `
+            <div class="alert">
+                <strong>${a.nature_risque}</strong> – ${a.heure_evenement}<br>
+                ${a.substances ? "Substances : " + a.substances : ""}
+            </div>
+        `;
+    });
+}
+
+// Charger le rapport Hantavirus
+async function chargerRapport() {
+    const res = await fetch("/api/rapport-hantavirus");
+    const data = await res.json();
+
+    document.getElementById("rapport").innerHTML = `
+        <h3>${data.titre}</h3>
+        <p>${data.resume}</p>
+        <p><strong>Dernière mise à jour :</strong> ${data.date}</p>
+    `;
+}
+
+chargerAlertes();
+chargerRapport();
+</script>
+
+</body>
+</html>
