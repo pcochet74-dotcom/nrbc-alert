@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <title>Fiche d’alerte NRBC‑E</title>
+    <style>
+        body { font-family: Arial, sans-serif; background:#f4f4f4; padding:20px; }
+        .container { max-width:800px; margin:auto; background:white; padding:25px; border-radius:10px; }
+        h2 { margin-top:0; }
+        h3 { margin-top:25px; border-bottom:1px solid #ddd; padding-bottom:5px; }
+        label { font-weight:bold; display:block; margin-top:10px; }
+        textarea, select, input[type="text"], input[type="number"], input[type="datetime-local"] {
+            width:100%; padding:8px; margin-top:5px; box-sizing:border-box;
+        }
+        .inline-group { display:flex; flex-wrap:wrap; gap:10px; margin-top:5px; }
+        .inline-group label { font-weight:normal; }
+        .inline-group input { margin-right:5px; }
+        button { margin-top:20px; padding:12px 20px; background:#c62828; color:white; border:none; border-radius:5px; cursor:pointer; }
+        button:hover { background:#b71c1c; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Fiche d’alerte NRBC‑E</h2>
+
+    <form id="nrbcForm">
+        <!-- QUOI ? -->
+        <h3>1. QUOI ? De quoi s’agit-il ?</h3>
+
+        <label>Nature du risque</label>
+        <div class="inline-group">
+            <label><input type="radio" name="nature_risque" value="Nucleaire" required> Nucléaire</label>
+            <label><input type="radio" name="nature_risque" value="Radiologique"> Radiologique</label>
+            <label><input type="radio" name="nature_risque" value="Biologique"> Biologique</label>
+            <label><input type="radio" name="nature_risque" value="Chimique"> Chimique</label>
+        </div>
+
+        <label>Risques proprement dits</label>
+        <div class="inline-group">
+            <label><input type="checkbox" name="risques" value="Irradiation/Contamination"> Irradiation / Contamination</label>
+            <label><input type="checkbox" name="risques" value="Explosion/Atmosphere explosive"> Explosion / Atmosphère explosive</label>
+            <label><input type="checkbox" name="risques" value="Incendie"> Incendie</label>
+            <label><input type="checkbox" name="risques" value="Toxique"> Toxique</label>
+            <label><input type="checkbox" name="risques" value="Corrosif"> Corrosif</label>
+            <label><input type="checkbox" name="risques" value="Infectieux"> Infectieux</label>
+        </div>
+
+        <label>Substances en cause</label>
+        <textarea name="substances" rows="2" placeholder="Nom(s) des produits, famille, etc."></textarea>
+
+        <label>Sous quelle forme ?</label>
+        <textarea name="forme" rows="2" placeholder="Gaz, liquide, solide, aérosol, poudre, etc."></textarea>
+
+        <label>COMBIEN ? Volume, nombre…</label>
+        <textarea name="volume" rows="2" placeholder="Volume de la fuite, volume du stockage, quantité estimée, nombre de sources, etc."></textarea>
+
+        <!-- OÙ ? -->
+        <h3>2. OÙ ?</h3>
+
+        <label>Localisation</label>
+        <textarea name="localisation" rows="2" placeholder="Adresse, site, bâtiment, niveau, repères…"></textarea>
+
+        <label>Distance</label>
+        <input type="text" name="distance" placeholder="Distance approximative par rapport à vous / aux proches">
+
+        <label>Effet domino ?</label>
+        <textarea name="effet_domino" rows="2" placeholder="Risque de propagation à d’autres installations, stocks, bâtiments, etc."></textarea>
+
+        <!-- QUAND ? -->
+        <h3>3. QUAND ?</h3>
+
+        <label>Heure de l’événement</label>
+        <input type="datetime-local" name="heure_evenement">
+
+        <label>Depuis combien de temps ?</label>
+        <input type="text" name="duree" placeholder="Ex : 10 minutes, 2 heures, en cours depuis…">
+
+        <!-- COMMENT ? -->
+        <h3>4. COMMENT ?</h3>
+
+        <label>Origine</label>
+        <div class="inline-group">
+            <label><input type="radio" name="origine" value="Accident"> Accident</label>
+            <label><input type="radio" name="origine" value="Attaque"> Attaque</label>
+            <label><input type="radio" name="origine" value="Malveillance"> Malveillance</label>
+            <label><input type="radio" name="origine" value="Inconnu"> Inconnu</label>
+        </div>
+
+        <!-- CONCLUSION -->
+        <h3>5. CONCLUSION</h3>
+
+        <label>Qu’est-ce que je risque ?</label>
+        <textarea name="risque_pour_moi" rows="2" placeholder="Gravité estimée, danger immédiat ou potentiel, etc."></textarea>
+
+        <label>Voie(s) d’exposition</label>
+        <div class="inline-group">
+            <label><input type="checkbox" name="voies_exposition" value="Inhalation"> Inhalation</label>
+            <label><input type="checkbox" name="voies_exposition" value="Contact"> Contact</label>
+            <label><input type="checkbox" name="voies_exposition" value="Exposition à distance"> Exposition à distance</label>
+            <label><input type="checkbox" name="voies_exposition" value="Ingestion"> Ingestion</label>
+        </div>
+
+        <label>Comment dois-je réagir ?</label>
+        <textarea name="consignes" rows="3" placeholder="Rester à l’intérieur, se confiner, s’éloigner, fermer les fenêtres, etc."></textarea>
+
+        <button type="submit">Envoyer l’alerte</button>
+    </form>
+</div>
+
+<script>
+document.getElementById("nrbcForm").addEventListener("submit", async function(e){
+    e.preventDefault();
+
+    const form = new FormData(this);
+
+    const data = {
+        nature_risque: form.get("nature_risque"),
+        risques: form.getAll("risques"),
+        substances: form.get("substances"),
+        forme: form.get("forme"),
+        volume: form.get("volume"),
+        localisation: form.get("localisation"),
+        distance: form.get("distance"),
+        effet_domino: form.get("effet_domino"),
+        heure_evenement: form.get("heure_evenement"),
+        duree: form.get("duree"),
+        origine: form.get("origine"),
+        risque_pour_moi: form.get("risque_pour_moi"),
+        voies_exposition: form.getAll("voies_exposition"),
+        consignes: form.get("consignes")
+    };
+
+    const res = await fetch("/api/alerte-nrbc", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data)
+    });
+
+    if(res.ok){
+        alert("Alerte NRBC‑E envoyée et enregistrée.");
+        this.reset();
+    } else {
+        alert("Erreur lors de l’envoi de l’alerte.");
+    }
+});
+</script>
+
+</body>
+</html>
